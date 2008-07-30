@@ -51,11 +51,15 @@ namespace :spec do
       t.spec_files = FileList["spec/#{sub}/**/*_spec.rb"]
     end
   end
-  
+
   desc "Run the specs under vendor/plugins (except RSpec's own)"
   Spec::Rake::SpecTask.new(:plugins => spec_prereq) do |t|
     t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
-    t.spec_files = FileList['vendor/plugins/**/spec/**/*_spec.rb'].exclude('vendor/plugins/rspec/*').exclude("vendor/plugins/rspec-rails/*")
+    if ENV['PLUGIN']
+      t.spec_files = FileList["vendor/plugins/#{ENV['PLUGIN']}/spec/**/*_spec.rb"].exclude('vendor/plugins/rspec/*').exclude("vendor/plugins/rspec-rails/*")
+    else
+      t.spec_files = FileList['vendor/plugins/*/spec/**/*_spec.rb'].exclude('vendor/plugins/rspec/*').exclude("vendor/plugins/rspec-rails/*")
+    end
   end
   
   namespace :plugins do
